@@ -40,6 +40,7 @@ impl Plugin for ScreenDiagsPlugin {
 ///
 /// To disable the FPS counter, get a [ResMut](bevy::prelude::ResMut) reference to this struct and
 /// pause the timer. Unpause the timer to re-enable the counter.
+#[derive(Resource)]
 pub struct ScreenDiagsState {
     /// The timer that triggers a diagnostics reading.
     /// Public, to allow flexible use, but in general use the methods to interact.
@@ -52,7 +53,7 @@ pub struct ScreenDiagsState {
 impl Default for ScreenDiagsState {
     fn default() -> Self {
         Self {
-            timer: Timer::new(UPDATE_INTERVAL, true),
+            timer: Timer::new(UPDATE_INTERVAL, TimerMode::Repeating),
             update_now: true,
         }
     }
@@ -123,7 +124,7 @@ fn extract_fps(diagnostics: &Res<Diagnostics>) -> Option<f64> {
 fn spawn_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font = asset_server.load("fonts/screen-diags-font.ttf");
     commands
-        .spawn_bundle(TextBundle {
+        .spawn(TextBundle {
             text: Text {
                 sections: vec![TextSection {
                     value: STRING_INITIAL.to_string(),
